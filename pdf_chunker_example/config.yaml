@@ -1,0 +1,89 @@
+# OpenEvolve configuration for PDF chunker evolution
+
+# General settings
+max_iterations: 200
+checkpoint_interval: 20
+log_level: "INFO"
+random_seed: 42
+
+# Evolution settings
+diff_based_evolution: true
+max_code_length: 8000
+
+# LLM configuration
+llm:
+  models:
+    - name: "gpt-4"
+      weight: 0.7
+    - name: "gpt-3.5-turbo"
+      weight: 0.3
+
+  evaluator_models:
+    - name: "gpt-4"
+      weight: 1.0
+
+  api_base: "https://api.openai.com/v1/"
+  api_key: null  # Set via OPENAI_API_KEY environment variable
+  
+  temperature: 0.8
+  top_p: 0.95
+  max_tokens: 4096
+  timeout: 60
+  retries: 3
+
+# Prompt configuration
+prompt:
+  system_message: |
+    You are an expert in PDF processing and RAG (Retrieval-Augmented Generation) systems.
+    Your task is to improve PDF chunking algorithms that split PDF documents into
+    meaningful chunks for use in RAG applications. Focus on:
+    - Semantic coherence within chunks
+    - Natural boundary detection (sentences, paragraphs)
+    - Metadata preservation
+    - Performance optimization
+    - Handling different document types (academic, technical, mixed content)
+    
+    Key improvements to consider:
+    1. Break at sentence or paragraph boundaries when possible
+    2. Maintain semantic meaning within chunks
+    3. Preserve document structure and metadata
+    4. Handle edge cases and errors gracefully
+    5. Optimize for both quality and performance
+
+  evaluator_system_message: |
+    You are an expert code reviewer specializing in PDF processing and RAG systems.
+    Evaluate code quality, efficiency, and adherence to best practices.
+
+  num_top_programs: 3
+  num_diverse_programs: 2
+  use_template_stochasticity: true
+
+# Database configuration
+database:
+  population_size: 100
+  archive_size: 25
+  num_islands: 3
+  migration_interval: 15
+  migration_rate: 0.15
+  
+  elite_selection_ratio: 0.15
+  exploration_ratio: 0.3
+  exploitation_ratio: 0.7
+  
+  feature_dimensions:
+    - "combined_score"
+    - "semantic_coherence"
+  feature_bins: 8
+
+# Evaluator configuration
+evaluator:
+  timeout: 60
+  max_retries: 2
+  cascade_evaluation: true
+  cascade_thresholds:
+    - 0.3
+    - 0.6
+    - 0.8
+  parallel_evaluations: 2
+  use_llm_feedback: true
+  llm_feedback_weight: 0.1 
